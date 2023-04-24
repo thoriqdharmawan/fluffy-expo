@@ -1,5 +1,5 @@
 
-import { ThemeProvider, DefaultTheme, DarkTheme } from "@react-navigation/native";
+import { ThemeProvider, DefaultTheme } from "@react-navigation/native";
 
 import {
   // Import `SplashScreen` from `expo-router` instead of `expo-splash-screen`
@@ -8,6 +8,7 @@ import {
   // This example uses a basic Layout component, but you can use any Layout.
   Slot,
 } from "expo-router";
+import { SafeAreaProvider } from "react-native-safe-area-context";
 
 import { useFonts, Inter_500Medium } from "@expo-google-fonts/inter";
 import { Provider } from "../context/auth";
@@ -32,10 +33,12 @@ export default function RootLayout() {
   // Render the children routes now that all the assets are loaded.
   return (
     // Setup the auth context and render our layout inside of it.
-    <ThemeProvider value={DefaultTheme}>
-      <Provider>
-        <Slot />
-      </Provider>
-    </ThemeProvider>
+    <SafeAreaProvider>
+      <ThemeProvider value={DefaultTheme}>
+        <Provider>
+          <Slot />
+        </Provider>
+      </ThemeProvider>
+    </SafeAreaProvider>
   );
 }
