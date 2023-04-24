@@ -1,4 +1,4 @@
-import { Tabs } from "expo-router";
+import { Link, Tabs } from "expo-router";
 import { Image, View } from "react-native";
 import Icon from 'react-native-vector-icons/Feather';
 
@@ -15,7 +15,7 @@ export default function Layout() {
             href: "/home/menu",
             tabBarLabel: 'Menu',
             title: 'Menu',
-            headerRight: () => <Icon name="shopping-cart" size={24} />,
+            headerRight: () => <Link href="/cart/list"><Icon name="shopping-cart" size={24} /></Link>,
             headerRightContainerStyle: { marginRight: 16 },
             tabBarIcon: () => {
               return (
