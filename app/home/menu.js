@@ -1,5 +1,13 @@
-import { StyleSheet, Text, View } from "react-native";
-import { BorderRadiuses, Card, GridList, Spacings } from "react-native-ui-lib";
+import { ScrollView, StyleSheet } from "react-native";
+import { BorderRadiuses, Card, GridList, Spacings, TextField, Text, View, Image, Button, Colors, Stepper } from "react-native-ui-lib";
+import { TouchableOpacity } from "react-native-gesture-handler";
+import { useMemo, useState } from "react";
+import Icon from 'react-native-vector-icons/Feather';
+
+import DialogContent from "../../components/dialog/DialogContent";
+import Divider from "../../components/divider/Divider";
+import Chip from "../../components/chip/Chip";
+
 
 const products = [
   {
@@ -181,44 +189,146 @@ const products = [
 ];
 
 export default function Menu() {
+  const [isVisible, setIsVisible] = useState(false)
   return (
     <View>
       <GridList
         data={products}
-        renderItem={({ item }) => <CardItem item={item} />}
+        renderItem={({ item }) => <CardItem item={item} onPress={() => setIsVisible(true)} />}
         keyExtractor={item => item.id}
         numColumns={2}
         itemSpacing={Spacings.s5}
         listPadding={Spacings.s5}
+        contentContainerStyle={{ marginBottom: Spacings.s6 }}
+        ListHeaderComponent={
+          <TextField
+            placeholder="Cari Produk"
+            // onChangeText={onChangeText}
+            containerStyle={styles.textField}
+            trailingAccessory={<Icon name="search" size={24} />}
+            fieldStyle={styles.textFieldInner}
+          />
+        }
       />
+
+      <DialogContent isVisible={isVisible} title="Ayam Bakar" onDismiss={() => setIsVisible(false)}>
+        <Content onDismiss={() => setIsVisible(false)} />
+      </DialogContent>
     </View>
   );
 }
 
-const CardItem = ({ item }) => {
+const CardItem = ({ item, onPress }) => {
   return (
-    <Card flex>
-      <Card.Section imageSource={{ uri: item.mediaUrl }} imageStyle={styles.itemImage} />
-      <View padding-s2>
-        <Text $textDefault>{item.name}</Text>
-        <Text $textDefault>{item.formattedPrice}</Text>
-        {item.inventory.status === 'Out of Stock' && (
-          <Text text90M $errorColor>
-            {item.inventory.status}
-          </Text>
-        )}
+    <TouchableOpacity onPress={onPress}>
+      <Card flex>
+        <Card.Section imageSource={{ uri: item.mediaUrl }} imageStyle={styles.itemImage} />
+        <View padding-s2>
+          <Text $textDefault>{item.name}</Text>
+          <Text $textDefault>{item.formattedPrice}</Text>
+          {item.inventory.status === 'Out of Stock' && (
+            <Text text90M $errorColor>
+              {item.inventory.status}
+            </Text>
+          )}
+        </View>
+      </Card>
+    </TouchableOpacity>
+  )
+}
+
+
+const Content = ({ onDismiss }) => {
+  const [active, setActive] = useState('')
+  const uri = 'https://images.pexels.com/photos/248412/pexels-photo-248412.jpeg?auto=compress&cs=tinysrgb&dpr=1&w=200'
+
+  const handleAddToCart = () => {
+    onDismiss()
+  }
+
+  const chips = useMemo(() => [
+    {
+      label: 'Chips 1',
+      active: active === 'Chips 1',
+    },
+    {
+      label: 'Chips 2',
+      active: active === 'Chips 2',
+    },
+    {
+      label: 'Chips 3',
+      active: active === 'Chips 3',
+    },
+  ], [active])
+
+  return (
+    <View height="91%">
+      <Image cover source={{ uri: uri }} marginB-20 />
+      <ScrollView style={{ flex: 1 }}>
+        <View marginH-20 marginB-20>
+          <Text style={styles.titleSection} text70 marginB-10>Description</Text>
+          <Text>Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text eve</Text>
+        </View>
+        <View marginH-20 marginB-20>
+          <Text style={styles.titleSection} text70 marginB-10>Varian</Text>
+          <View style={styles.chipWrapper}>
+            {chips?.map((c, idx) => (<Chip key={idx} label={c.label} active={c.active} onPress={() => setActive(c.label)} />))}
+          </View>
+        </View>
+        <View marginH-20 marginB-20>
+          <Text style={styles.titleSection} text70 marginB-10>Stok</Text>
+          <Text>50</Text>
+        </View>
+        <View marginH-20 marginB-20>
+          <Text style={styles.titleSection} text70 marginB-10>Harga</Text>
+          <Text>Rp 50.000</Text>
+        </View>
+      </ScrollView >
+      <View height={80}>
+        <Divider />
+        <View style={styles.action}>
+          <Stepper minValue={0} />
+          <Button
+            label="Tambah ke Keranjang"
+            onPress={handleAddToCart}
+            size={Button.sizes.medium}
+            backgroundColor={Colors.$iconPrimary}
+            iconSource={() => <Icon name="shopping-cart" size={16} color="#fff" style={styles.iconCart} />}
+          />
+        </View>
       </View>
-    </Card>
+    </View >
   )
 }
 
 const styles = StyleSheet.create({
-  list: {
-    paddingTop: Spacings.s5
+  textField: {
+    marginVertical: Spacings.s5,
+    borderWidth: 0.3,
+    padding: Spacings.s2,
+    borderRadius: Spacings.s3
+  },
+  textFieldInner: {
+    marginHorizontal: Spacings.s2
   },
   itemImage: {
     width: '100%',
     height: 85,
     borderRadius: BorderRadiuses.br10
+  },
+  titleSection: { fontWeight: 'bold' },
+  chipWrapper: {
+    flexDirection: 'row',
+    gap: 12,
+  },
+  action: {
+    flex: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingHorizontal: 16
+  },
+  iconCart: {
+    marginRight: 12
   }
 });
