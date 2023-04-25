@@ -1,3 +1,4 @@
+import { useRouter } from "expo-router";
 import { Dimensions, ScrollView, StyleSheet } from "react-native";
 import { Button, Card, Stepper, Text, View } from "react-native-ui-lib";
 
@@ -5,6 +6,12 @@ const HEIGHT = Dimensions.get('window').height
 const BUTTON_HEIGHT = 55
 
 export default function List() {
+  const router = useRouter();
+
+  const handleGoToTransaction = () => {
+    router.replace('/cart/transactions')
+  }
+
   return (
     <View style={{ height: HEIGHT - BUTTON_HEIGHT }}>
       <ScrollView>
@@ -20,7 +27,7 @@ export default function List() {
           <ProductItem />
         </View>
       </ScrollView>
-      <Button style={{ height: BUTTON_HEIGHT }} label="Lanjut Ke Pembayaran" fullWidth />
+      <Button style={{ height: BUTTON_HEIGHT }} label="Lanjut Ke Pembayaran" fullWidth onPress={handleGoToTransaction} />
     </View>
 
   )
@@ -55,5 +62,10 @@ const styles = StyleSheet.create({
   },
   stepper: {
     alignItems: 'flex-end'
+  },
+  buttonPayment: {
+    justifyContent: 'center',
+    alignItems: 'center',
+    display: 'flex'
   }
 });
